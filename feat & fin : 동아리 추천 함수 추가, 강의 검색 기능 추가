@@ -1,0 +1,281 @@
+//
+//  main.c
+//  mbti_courses_123
+//
+//  Created by 문정현 on 12/19/24.
+//
+
+#include <stdio.h>
+#include <string.h>
+
+// 강의 정보를 저장할 구조체 정의
+typedef struct {
+    char name[100];
+    char attendance[50];
+    char teachingMethod[50];
+    char examMethod[50];
+    int hasAssignment;
+    int hasTeamProject;
+} Course;
+
+// 함수 프로토타입 선언
+void recommendCourses(const char *mbti, Course *courses, int courseCount);  // 강의 추천 함수
+void searchCourses(Course *courses, int courseCount);  // 강의 검색 함수
+void recommendClubs(const char *mbti);  // 동아리 추천 함수
+
+int main(void) {
+    char mbti[5];
+    int choice;
+
+    // 강의 데이터를 코드 내에서 정의
+    Course courses[] = {
+        {"현대사회와심리학", "전자출결", "오프라인", "필기시험", 0, 0},
+        {"인간행동의심리적이해", "전자출결", "오프라인", "필기시험", 0, 0},
+        {"범죄와사회", "출결없음", "오프라인", "필기시험", 0, 0},
+        {"미래생활과화학", "호명출결", "오프라인", "필기시험", 0, 0},
+        {"기초세계사", "전자출결", "오프라인", "필기시험", 1, 0},
+        {"법과민주주의", "호명출결", "오프라인", "필기시험", 0, 0},
+        {"현대사회와의사결정", "전자출결", "오프라인", "필기시험", 0, 0},
+        {"성격심리와자기이해", "전자출결", "오프라인", "필기시험", 1, 0},
+        {"사회심리와인간관계", "전자출결", "오프라인", "필기시험", 1, 1},
+        {"마케팅특강", "전자출결", "오프라인", "시험없음", 1, 1},
+        {"문화다양성과글로벌시민", "전자출결", "오프라인", "필기시험", 0, 0},
+        {"창의적문제해결", "전자출결", "오프라인", "필기시험", 1, 1},
+        {"인간과시간", "호명출결", "오프라인", "필기시험", 0, 1},
+        {"식생활과건강", "전자출결", "오프라인", "필기시험", 1, 0},
+        {"생명과학의이해", "호명출결", "오프라인", "필기시험", 1, 0},
+        {"자연과학의세계", "전자출결", "오프라인", "필기시험", 0, 0},
+        {"잉파", "호명출결", "오프라인", "필기시험", 1, 1},
+        {"사고와표현", "전자출결", "오프라인", "필기시험", 1, 1},
+        {"교향곡의이해", "전자출결", "온라인", "필기시험", 1, 0},
+        {"부와권력의교환", "호명출결", "오프라인", "필기시험", 0, 1},
+        {"한국현대문화산책", "전자출결", "오프라인", "필기시험", 1, 1},
+        {"경영정보시스템", "전자출결", "오프라인", "필기시험", 1, 1},
+        {"이미지시대의테크놀로지와예술", "전자출결", "오프라인", "필기시험", 0, 0},
+        {"일본어입문", "전자출결", "오프라인", "필기시험", 0, 0},
+        {"휴먼커뮤니케이션", "전자출결", "온라인", "필기시험", 1, 1},
+        {"공간환경과인간", "전자출결", "온라인", "필기시험", 0, 0},
+        {"커리어디자인", "호명출결", "오프라인", "시험없음", 1, 0}
+    };
+
+    int courseCount = sizeof(courses) / sizeof(courses[0]);
+
+    // 사용자에게 선택지를 제공하여 직관적인 UI 제공
+    printf("1. MBTI에 맞는 강의 추천\n");
+    printf("2. 강의 검색\n");
+    printf("3. MBTI에 맞는 동아리 추천\n");
+    printf("선택하세요: ");
+    scanf("%d", &choice);
+
+    switch (choice) {
+        case 1:
+            printf("MBTI 유형을 입력하세요 (예: ESFP): ");
+            scanf("%4s", mbti);
+            recommendCourses(mbti, courses, courseCount);
+            break;
+        case 2:
+            searchCourses(courses, courseCount);
+            break;
+        case 3:
+            printf("MBTI 유형을 입력하세요 (예: INFP): ");
+            scanf("%4s", mbti);
+            recommendClubs(mbti);
+            break;
+        default:
+            printf("잘못된 선택입니다.\n");
+            break;
+    }
+
+    return 0;
+}
+
+// 강의 추천 함수
+void recommendCourses(const char *mbti, Course *courses, int courseCount) {
+    printf("\nMBTI 유형 %s에 적합한 강의 추천 목록:\n", mbti);
+
+    for (int i = 0; i < courseCount; i++) {
+        // MBTI에 'S'와 'J'가 포함된 경우 과제도 있고 팀플도 있는 강의만 추천
+        if (strchr(mbti, 'S') != NULL && strchr(mbti, 'J') != NULL) {
+            if (courses[i].hasAssignment == 1 && courses[i].hasTeamProject == 1) {
+                printf("강의명: %s\n", courses[i].name);
+                printf("출석 방식: %s\n", courses[i].attendance);
+                printf("강의 방식: %s\n", courses[i].teachingMethod);
+                printf("시험 방식: %s\n", courses[i].examMethod);
+                printf("과제 여부: %s\n", courses[i].hasAssignment ? "있음" : "없음");
+                printf("팀플 여부: %s\n\n", courses[i].hasTeamProject ? "있음" : "없음");
+            }
+        }
+        // 'I'가 포함된 경우 온라인 강의와 팀플 없는 강의 추천
+        else if (strchr(mbti, 'I') != NULL) {
+            if ((strstr(courses[i].teachingMethod, "온라인") != NULL) || courses[i].hasTeamProject == 0) {
+                // 'J'가 포함되면 과제가 있는 강의 추천
+                if (strchr(mbti, 'J') != NULL && courses[i].hasAssignment == 1) {
+                    printf("강의명: %s\n", courses[i].name);
+                    printf("출석 방식: %s\n", courses[i].attendance);
+                    printf("강의 방식: %s\n", courses[i].teachingMethod);
+                    printf("시험 방식: %s\n", courses[i].examMethod);
+                    printf("과제 여부: %s\n", courses[i].hasAssignment ? "있음" : "없음");
+                    printf("팀플 여부: %s\n\n", courses[i].hasTeamProject ? "있음" : "없음");
+                }
+                // 'P'가 포함되면 과제가 없는 강의 추천
+                else if (strchr(mbti, 'P') != NULL && courses[i].hasAssignment == 0) {
+                    printf("강의명: %s\n", courses[i].name);
+                    printf("출석 방식: %s\n", courses[i].attendance);
+                    printf("강의 방식: %s\n", courses[i].teachingMethod);
+                    printf("시험 방식: %s\n", courses[i].examMethod);
+                    printf("과제 여부: %s\n", courses[i].hasAssignment ? "있음" : "없음");
+                    printf("팀플 여부: %s\n\n", courses[i].hasTeamProject ? "있음" : "없음");
+                }
+            }
+        }
+        // 'E'가 포함된 경우 팀플이 있는 강의만 추천
+        else if (strchr(mbti, 'E') != NULL) {
+            if (courses[i].hasTeamProject == 1) {
+                printf("강의명: %s\n", courses[i].name);
+                printf("출석 방식: %s\n", courses[i].attendance);
+                printf("강의 방식: %s\n", courses[i].teachingMethod);
+                printf("시험 방식: %s\n", courses[i].examMethod);
+                printf("과제 여부: %s\n", courses[i].hasAssignment ? "있음" : "없음");
+                printf("팀플 여부: %s\n\n", courses[i].hasTeamProject ? "있음" : "없음");
+            }
+        }
+        // 'J'가 포함된 경우 과제가 있는 강의만 추천
+        else if (strchr(mbti, 'J') != NULL) {
+            if (courses[i].hasAssignment == 1) {
+                printf("강의명: %s\n", courses[i].name);
+                printf("출석 방식: %s\n", courses[i].attendance);
+                printf("강의 방식: %s\n", courses[i].teachingMethod);
+                printf("시험 방식: %s\n", courses[i].examMethod);
+                printf("과제 여부: %s\n", courses[i].hasAssignment ? "있음" : "없음");
+                printf("팀플 여부: %s\n\n", courses[i].hasTeamProject ? "있음" : "없음");
+            }
+        }
+        // 'P'가 포함된 경우 과제가 없는 강의만 추천
+        else if (strchr(mbti, 'P') != NULL) {
+            if (courses[i].hasAssignment == 0) {
+                printf("강의명: %s\n", courses[i].name);
+                printf("출석 방식: %s\n", courses[i].attendance);
+                printf("강의 방식: %s\n", courses[i].teachingMethod);
+                printf("시험 방식: %s\n", courses[i].examMethod);
+                printf("과제 여부: %s\n", courses[i].hasAssignment ? "있음" : "없음");
+                printf("팀플 여부: %s\n\n", courses[i].hasTeamProject ? "있음" : "없음");
+            }
+        }
+        // 'S'가 포함된 경우 시험이 있는 강의만 추천
+        else if (strchr(mbti, 'S') != NULL) {
+            if (strstr(courses[i].examMethod, "시험") != NULL) {
+                printf("강의명: %s\n", courses[i].name);
+                printf("출석 방식: %s\n", courses[i].attendance);
+                printf("강의 방식: %s\n", courses[i].teachingMethod);
+                printf("시험 방식: %s\n", courses[i].examMethod);
+                printf("과제 여부: %s\n", courses[i].hasAssignment ? "있음" : "없음");
+                printf("팀플 여부: %s\n\n", courses[i].hasTeamProject ? "있음" : "없음");
+            }
+        }
+        // 'N'이 포함된 경우 시험이 없는 강의만 추천
+        else if (strchr(mbti, 'N') != NULL) {
+            if (strstr(courses[i].examMethod, "시험없음") != NULL) {
+                printf("강의명: %s\n", courses[i].name);
+                printf("출석 방식: %s\n", courses[i].attendance);
+                printf("강의 방식: %s\n", courses[i].teachingMethod);
+                printf("시험 방식: %s\n", courses[i].examMethod);
+                printf("과제 여부: %s\n", courses[i].hasAssignment ? "있음" : "없음");
+                printf("팀플 여부: %s\n\n", courses[i].hasTeamProject ? "있음" : "없음");
+            }
+        }
+    }
+}
+
+
+// 강의 검색 함수
+void searchCourses(Course *courses, int courseCount) {
+    char searchTerm[100];
+
+    // 이전 입력에서 남은 개행 문자 제거
+    while(getchar() != '\n');  // 버퍼에 남아있는 모든 문자(개행 포함) 제거
+
+    printf("검색할 강의명을 입력하세요: ");
+    fgets(searchTerm, sizeof(searchTerm), stdin);  // fgets로 입력 받기
+
+    // 입력받은 문자열에서 끝의 개행 문자 제거
+    searchTerm[strcspn(searchTerm, "\n")] = 0;
+
+    printf("\n검색 결과:\n");
+    int found = 0; // 검색된 강의 여부 확인용 변수
+    for (int i = 0; i < courseCount; i++) {
+        if (strstr(courses[i].name, searchTerm) != NULL) {
+            printf("강의명: %s\n", courses[i].name);
+            printf("출석 방식: %s\n", courses[i].attendance);
+            printf("강의 방식: %s\n", courses[i].teachingMethod);
+            printf("시험 방식: %s\n", courses[i].examMethod);
+            printf("과제 여부: %s\n", courses[i].hasAssignment ? "있음" : "없음");
+            printf("팀플 여부: %s\n\n", courses[i].hasTeamProject ? "있음" : "없음");
+            found = 1; // 검색된 강의가 있으면 found를 1로 설정
+        }
+    }
+
+    if (!found) {
+        printf("검색된 강의가 없습니다.\n");
+    }
+}
+
+
+
+// 동아리 추천 함수
+void recommendClubs(const char *mbti) {
+    printf("\n%s 유형에 적합한 동아리 추천:\n", mbti);
+    
+    // 각 MBTI 유형별 동아리 추천
+    if (strcmp(mbti, "INFP") == 0) {
+        printf("1. 독서 동아리\n");
+        printf("2. 창작 글쓰기 동아리\n");
+    } else if (strcmp(mbti, "INFJ") == 0) {
+        printf("1. 사회 봉사 동아리\n");
+        printf("2. 문화교류 동아리\n");
+    } else if (strcmp(mbti, "INTP") == 0) {
+        printf("1. 토론 동아리\n");
+        printf("2. 학문 연구 동아리\n");
+    } else if (strcmp(mbti, "INTJ") == 0) {
+        printf("1. 창업 동아리\n");
+        printf("2. 기술/IT 동아리\n");
+    } else if (strcmp(mbti, "ISFP") == 0) {
+        printf("1. 미술 동아리\n");
+        printf("2. 사진 동아리\n");
+    } else if (strcmp(mbti, "ISFJ") == 0) {
+        printf("1. 봉사 활동 동아리\n");
+        printf("2. 정원 가꾸기 동아리\n");
+    } else if (strcmp(mbti, "ESTP") == 0) {
+        printf("1. 스포츠 동아리\n");
+        printf("2. 공연 관람 동아리\n");
+    } else if (strcmp(mbti, "ESFP") == 0) {
+        printf("1. 공연 관람 동아리\n");
+        printf("2. 사회 활동 동아리\n");
+    } else if (strcmp(mbti, "ENTP") == 0) {
+        printf("1. 창업 동아리\n");
+        printf("2. 혁신 기술 동아리\n");
+    } else if (strcmp(mbti, "ENTJ") == 0) {
+        printf("1. 경영학 동아리\n");
+        printf("2. 기술/IT 동아리\n");
+    } else if (strcmp(mbti, "ESFJ") == 0) {
+        printf("1. 사회 봉사 동아리\n");
+        printf("2. 문화교류 동아리\n");
+    } else if (strcmp(mbti, "ENFJ") == 0) {
+        printf("1. 지도력 개발 동아리\n");
+        printf("2. 봉사 활동 동아리\n");
+    } else if (strcmp(mbti, "ISTP") == 0) {
+        printf("1. 자동차 동아리\n");
+        printf("2. 군사 동아리\n");
+    } else if (strcmp(mbti, "ISTJ") == 0) {
+        printf("1. 군사 동아리\n");
+        printf("2. 역사 연구 동아리\n");
+    } else if (strcmp(mbti, "ISFJ") == 0) {
+        printf("1. 봉사 활동 동아리\n");
+        printf("2. 요리 동아리\n");
+    } else if (strcmp(mbti, "ESTJ") == 0) {
+        printf("1. 경영학 동아리\n");
+        printf("2. 지도력 개발 동아리\n");
+    } else {
+        printf("1. 다양한 활동을 하는 복합 동아리\n");
+        printf("2. 친목을 도모하는 동아리\n");
+    }
+}
