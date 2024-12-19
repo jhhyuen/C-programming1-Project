@@ -1,0 +1,98 @@
+//
+//  main.c
+//  mbti_courses
+//
+//  Created by 문정현 on 12/19/24.
+//
+
+#include <stdio.h>
+#include <string.h>
+
+// 강의 정보를 저장할 구조체 정의
+typedef struct {
+    char name[100];
+    char attendance[50];
+    char teachingMethod[50];
+    char examMethod[50];
+    int hasAssignment;
+    int hasTeamProject;
+} Course;
+
+// 함수 프로토타입 선언
+void recommendCourses(const char *mbti, Course *courses, int courseCount);
+
+int main(void) {
+    char mbti[5];
+
+    // 강의 데이터를 코드 내에서 정의
+    Course courses[] = {
+        {"현대사회와심리학", "전자출결", "오프라인", "필기시험", 0, 0},
+        {"인간행동의심리적이해", "전자출결", "오프라인", "필기시험", 0, 0},
+        {"범죄와사회", "출결없음", "오프라인", "필기시험", 0, 0},
+        {"미래생활과화학", "호명출결", "오프라인", "필기시험", 0, 0},
+        {"기초세계사", "전자출결", "오프라인", "필기시험", 1, 0},
+        {"법과민주주의", "호명출결", "오프라인", "필기시험", 0, 0},
+        {"현대사회와의사결정", "전자출결", "오프라인", "필기시험", 0, 0},
+        {"성격심리와자기이해", "전자출결", "오프라인", "필기시험", 1, 0},
+        {"사회심리와인간관계", "전자출결", "오프라인", "필기시험", 1, 1},
+        {"마케팅특강", "전자출결", "오프라인", "시험없음", 1, 1},
+        {"문화다양성과글로벌시민", "전자출결", "오프라인", "필기시험", 0, 0},
+        {"창의적문제해결", "전자출결", "오프라인", "필기시험", 1, 1},
+        {"인간과시간", "호명출결", "오프라인", "필기시험", 0, 1},
+        {"식생활과건강", "전자출결", "오프라인", "필기시험", 1, 0},
+        {"생명과학의이해", "호명출결", "오프라인", "필기시험", 1, 0},
+        {"자연과학의세계", "전자출결", "오프라인", "필기시험", 0, 0},
+        {"잉파", "호명출결", "오프라인", "필기시험", 1, 1},
+        {"사고와표현", "전자출결", "오프라인", "필기시험", 1, 1},
+        {"교향곡의이해", "전자출결", "온라인", "필기시험", 1, 0},
+        {"부와권력의교환", "호명출결", "오프라인", "필기시험", 0, 1},
+        {"한국현대문화산책", "전자출결", "오프라인", "필기시험", 1, 1},
+        {"경영정보시스템", "전자출결", "오프라인", "필기시험", 1, 1},
+        {"이미지시대의테크놀로지와예술", "전자출결", "오프라인", "필기시험", 0, 0},
+        {"일본어입문", "전자출결", "오프라인", "필기시험", 0, 0},
+        {"휴먼커뮤니케이션", "전자출결", "온라인", "필기시험", 1, 1},
+        {"공간환경과인간", "전자출결", "온라인", "필기시험", 0, 0},
+        {"커리어디자인", "호명출결", "오프라인", "시험없음", 1, 0}
+    };
+
+    int courseCount = sizeof(courses) / sizeof(courses[0]);
+
+    // 사용자로부터 MBTI 유형 입력 받기
+    printf("MBTI 유형을 입력하세요 (예: INFP): ");
+    scanf("%4s", mbti);
+
+    // 강의 추천
+    recommendCourses(mbti, courses, courseCount);
+
+    return 0;
+}
+
+// MBTI에 따라 조건에 맞는 강의를 필터링
+void recommendCourses(const char *mbti, Course *courses, int courseCount) {
+    printf("\nMBTI 유형 %s에 적합한 강의 추천 목록:\n", mbti);
+
+    for (int i = 0; i < courseCount; i++) {
+        // MBTI에 'I'가 들어가면 온라인 강의와 팀플 없는 강의 추천
+        if (strchr(mbti, 'I') != NULL) {
+            if (strstr(courses[i].teachingMethod, "온라인") != NULL || courses[i].hasTeamProject == 0) {
+                printf("강의명: %s\n", courses[i].name);
+                printf("출석 방식: %s\n", courses[i].attendance);
+                printf("강의 방식: %s\n", courses[i].teachingMethod);
+                printf("시험 방식: %s\n", courses[i].examMethod);
+                printf("과제 여부: %s\n", courses[i].hasAssignment ? "있음" : "없음");
+                printf("팀플 여부: %s\n\n", courses[i].hasTeamProject ? "있음" : "없음");
+            }
+        }
+        // MBTI에 'E'가 들어가면 팀플 있는 강의 추천
+        else if (strchr(mbti, 'E') != NULL) {
+            if (courses[i].hasTeamProject == 1) {
+                printf("강의명: %s\n", courses[i].name);
+                printf("출석 방식: %s\n", courses[i].attendance);
+                printf("강의 방식: %s\n", courses[i].teachingMethod);
+                printf("시험 방식: %s\n", courses[i].examMethod);
+                printf("과제 여부: %s\n", courses[i].hasAssignment ? "있음" : "없음");
+                printf("팀플 여부: %s\n\n", courses[i].hasTeamProject ? "있음" : "없음");
+            }
+        }
+    }
+}
